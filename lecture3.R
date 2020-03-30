@@ -174,44 +174,45 @@ lines(x, y.1, col ='red', lwd =3)
 lines(x, y.2, col = 'green', lty=2, lwd=3)
 axis(1)
 
-#5. 구간 추정
+ㄱ#5. 구간 추정
 
 #5.1. 신뢰구간 의미 파악
-set.seed(123)
-n <- 10
-x <- 1:100
-y <- seq(-3,3, by = 0.01)
+set.seed(123) #동일한 난수 생성을 위한 설정
+n <- 10 #표본의 크기 
+x <- 1:100 #표본 추출 순서
+y <- seq(-3,3, by = 0.01) #-3부터 3까지 0.01 씩 증가하는 벡터 
 
-smps <- matrix(rnorm(n*length(x)), ncol = n)
-
-xbar <- apply(smps, 1, mean)
-se <- 1 /sqrt(10)
-alpha <- 0.05
-z <- qnorm(1 - alpha/2)
-ll <- xbar -z *se
-ul <- xbar +z *se
+smps <- matrix(rnorm(n*length(x)), ncol = n) #표본정규분포로 부터 표본 개수(n=10) * 표본 추출횟수(x의 크기 =100)인 1000개의 난수 생성, 각 행별은 10개씩 추출한 표본 역할 
+xbar <- apply(smps, 1, mean) #각 표본의 평균(행별)을 xbar에 저장
+se <- 1 /sqrt(10) # 표준오차 구하기:모집단이 표준 정규 분포인 경우 분자는 모집단의 표준 편차인 1, 분자는 표본 개수의 제곱근
+alpha <- 0.05 #오류의 확률 
+z <- qnorm(1 - alpha/2) #상한의 z와 하한의 z 사이의 면접이(1-a)가 되는 z 값 계산
+ll <- xbar -z *se #하한'표본평균 +_ z(a/2)SE(X)구함
+ul <- xbar +z *se #상한'표본평균 +_ z(a/2)SE(X)구함
 
 plot(y, type = "n", xlab = "trial", ylab = "Z",
      main = "95% Confidence Interval for Populatoin mean",
-     xlim = c(1, 100), ylim = c(-1.5, 1.5), cex.lab = 1.8)
-abline(h = 0, col = "red", lty = 2)
+     xlim = c(1, 100), ylim = c(-1.5, 1.5), cex.lab = 1.8) #100개의 신뢰구간이 들어갈 빈 영역(type='n)을 그림. x축에 각 시행이 표시되고(시행이 100회이므로 이를 모두 표현해주기 위해 xlim=c(0, 100)),y 축은 표준정규 본포 값
+
+abline(h = 0, col = "red", lty = 2) #모집단 평균이 0을 붉은색 점선으로 표시
 l.c <- rep(NA, length(x))
-l.c <- ifelse(ll * ul > 0, "red", "black")
+l.c <- ifelse(ll * ul > 0, "red", "black") #각각의 신뢰구간이 평균을 포함하면 하한은 음수, 상한은 양수이므로 하한과 상한을 곱한 값이 음수가 됨
+#상한과 하한의 곱의 값이 음수이면 흑색, 양수이면 적색으로 표시()
 arrows(1:length(x), ll, 1:length (x), ul, code = 3,
        angle= 90, length = 0.02, col = l.c, lwd = 1.5)
 
 
 #모분산을 모를 때 95% 신뢰구간
-ci.t <- function(x, alpha=0.05){
-  n <- length(smp)
-  m <- mean(x)
-  s <- sd(x)
-  t <- qt(1 - (alpha /2), df = n-1)
-  ll <- m - t * (s / sqrt(n))
-  ul <- m + t * (s /sqrt(n))
-  ci <- c(1- alpha, ll, m, ul)
-  names(ci) <- c("Confidence Level", "Lower limit", "Mean", "Upper limit")
-  return(ci)
+ci.t <- function(x, alpha=0.05){  #함수 이름 ci.t 신뢰구간을 구할 자료들이 들어 있는 벡터를 전달받아 변수 x에 저장 사용, 오류의 확률 a는 기본전달인자로 0.05를 기본값으로 설정
+  n <- length(smp) #표본크기를 변수 n에 저장
+  m <- mean(x) #표본의 평균을 변수 m에 저장
+  s <- sd(x) #표본의 표준편차를 변수 sdp 저장
+  t <- qt(1 - (alpha /2), df = n-1) #t 값을 구하기 위해 분위수 함수qt()함수 사용
+  ll <- m - t * (s / sqrt(n)) #신뢰 구간 하한 값 구하기 
+  ul <- m + t * (s /sqrt(n)) #신뢰 구간 상한 값 구하기
+  ci <- c(1- alpha, ll, m, ul) #신뢰수준, 하한, 평균, 상한 값 벡터 생성
+  names(ci) <- c("Confidence Level", "Lower limit", "Mean", "Upper limit") #벡터 값의 이름 생성
+  return(ci) #함수를 호출한 사람에게 벡터 ci 반환
 }
 
 smp <- c(520, 498, 481, 512, 515, 542, 520, 518, 527, 526)

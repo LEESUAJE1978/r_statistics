@@ -1,10 +1,12 @@
+#소스코드 다운받기 : https://github.com/LEESUAJE1978/r_statistics
+
 install.packages('dplyr') # EDA 를 위한 dplyr 패키지 설치
 install.packages('readxl') #엑셀 파일 불러오기 위한 패키지 설치
 
 require(dplyr) #패키지 블러오기, 설치된 패키지라도 사용할 때 마다 불러와야 한다. 
 require(readxl)#패키지 블러오기
 
-
+getwd()
 setwd('C:/Users/tkpeo/Documents/r_statistics') #working directory 세팅, 파일을 저장해 놓은 경로를 설정한다. 
 
 
@@ -26,12 +28,15 @@ names(covid) <- c('time', 'location', 'state1','state2','count')#컬럼명 바�
 is.na(covid) #전체 확인
 sum(is.na(covid))# 전체 na 값합계 확인
 colSums(is.na(covid)) #컬럼별 na 값 확인
+rowSums(is.na(covid))
+
 
 #3. 날짜 데이터 다루기
 install.packages('lubridate') #날짜 다루기 위한 패키지 설치
 require(lubridate)#패키지 불러오기
 covid$newdate <- date(covid$time) #일자별 발표 시간은 매일 동일하여 시간 제외한 날짜 데이터 생성
-
+covid$newdate
+covid$time
 
 #4. 2월 29일 지역별 검사현황 및 확진자 현황
 covid %>% filter(newdate =="2020-02-29") %>% 
